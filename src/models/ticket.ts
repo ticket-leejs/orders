@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { Order, OrderStatus } from './order';
-import { StringMappingType } from 'typescript';
 
 interface TicketAttrs {
   id: string;
@@ -19,7 +18,7 @@ export interface TicketDoc extends mongoose.Document {
 interface TicketModel extends mongoose.Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc;
   findByEvent(event: {
-    id: string;
+    id: string,
     version: number;
   }): Promise<TicketDoc | null>;
 }
@@ -64,7 +63,7 @@ ticketSchema.statics.build = (attrs: TicketAttrs) => {
 };
 ticketSchema.methods.isReserved = async function () {
   const existingOrder = await Order.findOne({
-    ticket: this,
+    ticket: this as any,
     status: {
       $in: [
         OrderStatus.Created,
